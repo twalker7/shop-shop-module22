@@ -16,8 +16,7 @@ const Home = () => {
   </div>
   );
 };
-/*  code we removed after re
- factoring 
+/*  code we removed after refactoring --useState removed from dependency
 const Home = () => {
   const [currentCategory, setCategory] = useState("");
 

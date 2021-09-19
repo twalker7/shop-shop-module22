@@ -20,6 +20,8 @@ import {
   ADD_TO_CART,
 } from '../utils/actions';
 
+import {idbPromise} from "../utils/helpers"
+
 
 
 function Detail() {
@@ -34,7 +36,7 @@ const { loading, data } = useQuery(QUERY_PRODUCTS);
 const { products, cart } = state;
 
 
-useEffect(() => {
+/* useEffect(() => {
   if (products.length) {
     setCurrentProduct(products.find(product => product._id === id));
   } else if (data) {
@@ -44,6 +46,34 @@ useEffect(() => {
     });
   }
 }, [products, data, dispatch, id]);
+*/
+// added from 22.3.4
+useEffect(() => {
+  // already in global store
+  if (products.length) {
+    setCurrentProduct(products.find(product => product._id === id));
+  } 
+  // retrieved from server
+  else if (data) {
+    dispatch({
+      type: UPDATE_PRODUCTS,
+      products: data.products
+    });
+
+    data.products.forEach((product) => {
+      idbPromise('products', 'put', product);
+    });
+  }
+  // get cache from idb
+  else if (!loading) {
+    idbPromise('products', 'get').then((indexedProducts) => {
+      dispatch({
+        type: UPDATE_PRODUCTS,
+        products: indexedProducts
+      });
+    });
+  }
+}, [products, data, loading, dispatch, id]);
 
 /* 22.2.6 add-to-cart functionality addtoCart()
 const addToCart = () => {

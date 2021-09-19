@@ -6,12 +6,20 @@ import {useStoreContext} from '../../utils/GlobalState';
 import { useEffect } from 'react';
 import { UPDATE_CATEGORIES, UPDATE_CURRENT_CATEGORY } from '../../utils/actions';
 
+  //22.3.4
+  import { idbPromise } from '../../utils/helpers';
+
+
 function CategoryMenu({ setCategory }) {
   const [state, dispatch] = useStoreContext();
 
   const { categories } = state;
-  
-  const { data: categoryData } = useQuery(QUERY_CATEGORIES);
+
+  //loading adding to destructure 22.3.4 for iDB persistence functionality 
+  const { loading,  data: categoryData } = useQuery(QUERY_CATEGORIES);
+
+
+
   
   useEffect(() => {
     // if categoryData exists or has changed from the response of useQuery, then run dispatch()
@@ -20,6 +28,18 @@ function CategoryMenu({ setCategory }) {
       dispatch({
         type: UPDATE_CATEGORIES,
         categories: categoryData.categories
+      });
+
+      // added from 22.3.4 for implementing idbPromise function 
+      categoryData.categories.forEach(category => {
+        idbPromise('categories', 'put', category);
+      });
+    } else if (!loading) {
+      idbPromise('categories', 'get').then(categories => {
+        dispatch({
+          type: UPDATE_CATEGORIES,
+          categories: categories
+        });
       });
     }
   }, [categoryData, dispatch]);
