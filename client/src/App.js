@@ -38,6 +38,27 @@ const client = new ApolloClient({
 });
 
 function App() {
+  /*
+     const [book,setBook]=useState({
+       name:"",
+       authors:[],
+       link:""
+     }) 
+
+     const [state, dispatch]=useState({
+       name:"",
+       authors:[],
+       link:""
+     }) 
+
+     //globalstate
+     const [state, dispatch]=useContext()
+  
+     //convert it to redux from below
+
+     const dispatch=useDispatch()
+     const state =useSelector(state=>state)
+  */ 
   return (
     <ApolloProvider client={client}>
       <Router>
